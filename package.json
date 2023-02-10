@@ -7,8 +7,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "serverless offline start",
-    "serve": "ngrok http 3000",
+    "start": "serverless offline start --host=0.0.0.0 --httpPort=4005",
+    "serve": "ngrok http 4005",
     "deploy": "serverless deploy"
   },
   "dependencies": {

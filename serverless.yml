@@ -1,4 +1,4 @@
-service: chatgpt-slackbot
+service: chatgpt-slack-bot
 frameworkVersion: "3"
 useDotenv: true
 
