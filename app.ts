@@ -27,7 +27,7 @@ const updateMessage = debounce(async ({channel, ts, text, payload}: any) => {
             event_payload: payload
         } : undefined
     });
-}, 200);
+}, 400);
 
 app.event("app_mention", async ({event, say}) => {
     console.log('app_mention channel', event.channel);
