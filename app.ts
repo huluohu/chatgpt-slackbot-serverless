@@ -1,6 +1,6 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
+import {APIGatewayProxyHandler} from 'aws-lambda';
 import Slack from '@slack/bolt'
-import { ChatGPTAPI } from "chatgpt";
+import {ChatGPTAPI} from "chatgpt";
 import debounce from 'debounce-promise';
 
 const api = new ChatGPTAPI({
@@ -17,7 +17,7 @@ const app = new Slack.App({
     processBeforeResponse: true
 });
 
-const updateMessage = debounce(async ({ channel, ts, text, payload }: any) => {
+const updateMessage = debounce(async ({channel, ts, text, payload}: any) => {
     await app.client.chat.update({
         channel: channel,
         ts: ts,
@@ -29,7 +29,7 @@ const updateMessage = debounce(async ({ channel, ts, text, payload }: any) => {
     });
 }, 200);
 
-app.event("app_mention", async ({ event, say }) => {
+app.event("app_mention", async ({event, say}) => {
     console.log('app_mention channel', event.channel);
 
     const question = event.text.replace(/(?:\s)<@[^, ]*|(?:^)<@[^, ]*/, '');
@@ -57,7 +57,7 @@ app.event("app_mention", async ({ event, say }) => {
     });
 });
 
-app.message("reset", async ({ message, say }) => {
+app.message("reset", async ({message, say}) => {
     console.log('reset channel', message.channel);
 
     await say({
@@ -66,14 +66,14 @@ app.message("reset", async ({ message, say }) => {
     });
 });
 
-app.message(async ({ message, say }) => {
+app.message(async ({message, say}) => {
     const isUserMessage = message.type === "message" && !message.subtype && !message.bot_id;
 
-    if(isUserMessage && message.text && message.text !== "reset") {
+    if (isUserMessage && message.text && message.text !== "reset") {
         console.log('user channel', message.channel);
 
 
-        const { messages } = await app.client.conversations.history({
+        const {messages} = await app.client.conversations.history({
             channel: message.channel,
             latest: message.ts,
             inclusive: true,
@@ -114,14 +114,20 @@ app.message(async ({ message, say }) => {
                 text: `${answer.text} :done:`,
                 payload: answer,
             });
-        } catch(error) {
+        } catch (error) {
             console.error(error);
 
-            if(error instanceof Error) {
-                await app.client.chat.update({
+            if (error instanceof Error) {
+                await updateMessage({
                     channel: ms.channel!,
                     ts: ms.ts!,
                     text: `:goose_warning: ${error.toString()}`
+                });
+            } else {
+                await updateMessage({
+                    channel: ms.channel!,
+                    ts: ms.ts!,
+                    text: `:goose_warning: 未知错误`
                 });
             }
         }
@@ -135,8 +141,8 @@ app.error((error) => {
 });
 
 export const handler: APIGatewayProxyHandler = async (event, context, callback) => {
-    if(event.headers['X-Slack-Retry-Num']) {
-        return { statusCode: 200, body: "ok" }
+    if (event.headers['X-Slack-Retry-Num']) {
+        return {statusCode: 200, body: "ok"}
     }
     const handler = await awsLambdaReceiver.start();
 
