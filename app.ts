@@ -5,6 +5,7 @@ import debounce from 'debounce-promise';
 
 const api = new ChatGPTAPI({
     apiKey: process.env.OPENAI_API_KEY!,
+    debug: true
 })
 
 const awsLambdaReceiver = new Slack.AwsLambdaReceiver({
