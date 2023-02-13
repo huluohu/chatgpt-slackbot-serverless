@@ -53,7 +53,7 @@ app.event("app_mention", async ({event, say}) => {
     await updateMessage({
         channel: ms.channel!,
         ts: ms.ts!,
-        text: `${answer.text} :done:`,
+        text: `${answer.text}`,
     });
 });
 
