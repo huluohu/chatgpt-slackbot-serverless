@@ -5,6 +5,11 @@ import debounce from 'debounce-promise';
 
 const api = new ChatGPTAPI({
     apiKey: process.env.OPENAI_API_KEY!,
+    maxResponseTokens: process.env.MAX_RESPONSE_TOKEN ? Number(process.env.MAX_RESPONSE_TOKEN) : 1000,
+    completionParams : {
+        temperature : process.env.TEMPERATURE ? Number(process.env.TEMPERATURE) : 0.9
+
+    },
     debug: true
 })
 
@@ -93,16 +98,18 @@ app.message(async ({message, say}) => {
         });
 
 
+        var answerText = "";
         try {
             const answer = await api.sendMessage(message.text, {
                 parentMessageId: previous.parentMessageId,
                 conversationId: previous.conversationId,
                 onProgress: async (answer) => {
                     // Real-time update
+                    answerText = answer.text;
                     await updateMessage({
                         channel: ms.channel,
                         ts: ms.ts,
-                        text: answer.text,
+                        text: answerText,
                         payload: answer,
                     });
                 }
@@ -112,7 +119,7 @@ app.message(async ({message, say}) => {
             await updateMessage({
                 channel: ms.channel,
                 ts: ms.ts,
-                text: `${answer.text} :done:`,
+                text: `${answerText} :done:`,
                 payload: answer,
             });
         } catch (error) {
@@ -122,13 +129,13 @@ app.message(async ({message, say}) => {
                 await updateMessage({
                     channel: ms.channel!,
                     ts: ms.ts!,
-                    text: `:goose_warning: ${error.toString()}`
+                    text: `${answerText}- ${error.toString()}`,
                 });
             } else {
                 await updateMessage({
                     channel: ms.channel!,
                     ts: ms.ts!,
-                    text: `:goose_warning: 未知错误`
+                    text: `${answerText}- 未知错误`
                 });
             }
         }
