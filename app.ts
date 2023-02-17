@@ -36,13 +36,13 @@ const updateMessage = debounce(async ({channel, ts, text, payload}: any) => {
 }, 400);
 
 app.event("app_mention", async ({event, say}) => {
-    console.log('app_mention channel', event.channel);
+    console.log('app_mention channel', event);
 
     const question = event.text.replace(/(?:\s)<@[^, ]*|(?:^)<@[^, ]*/, '');
 
     const ms = await say({
         channel: event.channel,
-        text: ':thinking_face:',
+        text: ':thought_balloon:',
     });
 
     const answer = await api.sendMessage(question, {
@@ -73,12 +73,9 @@ app.message("reset", async ({message, say}) => {
 });
 
 app.message(async ({message, say}) => {
+    console.log('user message', message);
     const isUserMessage = message.type === "message" && !message.subtype && !message.bot_id;
-
     if (isUserMessage && message.text && message.text !== "reset") {
-        console.log('user channel', message.channel);
-
-
         const {messages} = await app.client.conversations.history({
             channel: message.channel,
             latest: message.ts,
@@ -94,11 +91,11 @@ app.message(async ({message, say}) => {
 
         const ms = await say({
             channel: message.channel,
-            text: ':thinking_face:',
+            text: ':thought_balloon:',
         });
 
 
-        var answerText = "";
+        let answerText = "";
         try {
             const answer = await api.sendMessage(message.text, {
                 parentMessageId: previous.parentMessageId,
@@ -119,7 +116,7 @@ app.message(async ({message, say}) => {
             await updateMessage({
                 channel: ms.channel,
                 ts: ms.ts,
-                text: `${answerText} :done:`,
+                text: `${answerText} :end:`,
                 payload: answer,
             });
         } catch (error) {

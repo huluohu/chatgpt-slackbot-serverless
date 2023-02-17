@@ -1,5 +1,7 @@
 #!/bin/bash
 echo "###############开始构建Docker镜像###############"
+# npm i
+# yarn install
 
 v="latest"
 l="y"
