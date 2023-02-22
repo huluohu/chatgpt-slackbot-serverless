@@ -4,23 +4,23 @@ import {ChatGPTAPI, ChatGPTUnofficialProxyAPI} from "chatgpt";
 import debounce from 'debounce-promise';
 // import {Chat} from './chat'
 
-// const api = new ChatGPTAPI({
-//     apiKey: process.env.OPENAI_API_KEY!,
-//     maxResponseTokens: process.env.MAX_RESPONSE_TOKEN ? Number(process.env.MAX_RESPONSE_TOKEN) : 1000,
-//     completionParams : {
-//         temperature : process.env.TEMPERATURE ? Number(process.env.TEMPERATURE) : 0.9
-//
-//     },
-//     debug: true
-// })
+const api = new ChatGPTAPI({
+    apiKey: process.env.OPENAI_API_KEY!,
+    maxResponseTokens: process.env.MAX_RESPONSE_TOKEN ? Number(process.env.MAX_RESPONSE_TOKEN) : 1000,
+    completionParams : {
+        temperature : process.env.TEMPERATURE ? Number(process.env.TEMPERATURE) : 0.9
+
+    },
+    debug: true
+})
 
 // const api = Chat.getChat();
 
 
-const api = new ChatGPTUnofficialProxyAPI({
-    accessToken: process.env.OPENAI_ACCESS_TOKEN!,
-    debug: true
-})
+// const api = new ChatGPTUnofficialProxyAPI({
+//     accessToken: process.env.OPENAI_ACCESS_TOKEN!,
+//     debug: true
+// })
 
 const awsLambdaReceiver = new Slack.AwsLambdaReceiver({
     signingSecret: process.env.SLACK_SIGNING_SECRET!,
